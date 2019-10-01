@@ -99,18 +99,15 @@
        }
 
        function pushBoxesUp(freeBoxes) {
-           //console.log(freeBoxes);
-           var tmp_index;
-           for(var i=0; i<freeBoxes.length; i++) {
-               //console.log(freeBoxes[i]+5);
-               if(gameField.blocksReserved.includes(freeBoxes[i]+5)) {
-                   tmp_index = gameField.blocksReserved.findIndex(function(element) {
-                       return element === freeBoxes[i]+5;
-                   });
-                   console.log("Index: " + tmp_index);
-                   if(tmp_index != -1) {
-                        gameField.blocksReserved[tmp_index] = freeBoxes[i];
 
+           var tmp_id;
+           for(var i=0; i<freeBoxes.length; i++) {
+               for(var j=1; j<10; j++) {
+                   tmp_id = freeBoxes[i] * j + 5;
+                   if(gameField.blocksReserved.findIndex(function(element){
+                      return element == tmp_id;
+                   })) {
+                       gameField.blocksReserved.slice(tmp_id)
                    }
                }
            }
