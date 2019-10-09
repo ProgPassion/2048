@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2048 Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            height: 100%;
+            padding-top: 50px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+        }
+        .wrap {
+            width:300px;
+            height: 300px;
+            margin: 0 auto;
+            background-color: darkgrey;
+            border: 1px solid black;
+            overflow: auto;
+        }
+        .wrap div {
+            width: 73px;
+            height: 73px;
+            border: 1px solid black;
+            float: left;
+            font-size: 36px;
+            line-height: 73px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h1>2048 Game</h1>
+<div class="wrap" id="field">
+
+</div>
+<script type="text/javascript">
+    var gameField = {
+        DOMid : document.getElementById("field"),
+        width : 300,
+        height: 600,
+        map: [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],
+	freeMapCells: [],
+        writeInsideCell: function (cell_id, value){
+					if(value !== 0)
+						document.getElementById(`id_${cell_id}`).innerHTML = value; 
+				}
+    };
+    
+    (function() {
+        for(let i=0; i<gameField.map.length; i++) 
+	   for(let j=0; j<gameField.map.length; j++)
+            gameField.DOMid.innerHTML += `<div id='id_${i}${j}'></div>`;
+    }());
+
+
+    function findFreeCells() {
+	gameField.freeMapCells = [];
+	
+	for(let	i=0; i<gameField.map.length; i++)
+	   for(let j=0; j<gameField.map.length; j++)
+		if(gameField.map[i][j] === 0 || gameField.map[i][j] === 2)
+			gameField.freeMapCells.push(`${i}${j}`);
+    }
+
+
+    function selectRandomCell() {
+	let tmp_id, nrOfBlocksToReturn=2, index1, index2;		
+	
+	for(let i=0; i<nrOfBlocksToReturn; i++) {
+		findFreeCells();
+		tmp_id =  Math.floor(Math.random() * gameField.freeMapCells.length);
+		index1 = gameField.freeMapCells[tmp_id].charAt(0);
+		index2 = gameField.freeMapCells[tmp_id].charAt(1); 
+
+		insertToMap(index1, index2);	
+	}
+    }
+
+
+    function insertToMap(index1, index2) {
+
+	if(gameField.map[index1][index2] === 0)
+	   gameField.map[index1][index2] = 2;
+	else if(gameField.map[index1][index2] === 2)
+	   gameField.map[index1][index2] = 4;
+    }
+
+
+    
+    function renderTheMap() {
+       for(let i=0; i<gameField.map.length; i++)
+	  for(let j=0; j<gameField.map.length; j++)
+		gameField.writeInsideCell(`${i}${j}`, gameField.map[i][j]);
+    }
+
+    selectRandomCell();
+    renderTheMap();
+	    
+</script>
+</body>
+</html>
