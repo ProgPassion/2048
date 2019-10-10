@@ -44,7 +44,7 @@
     const gameField = {
         	DOMid : document.getElementById("field"),
        	 	width : 300,
-        	height: 300,
+        	height: 600,
     		map   : [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],
     		freeMapCells: [],
         	writeInsideCell: function (cell_id, value){
@@ -52,7 +52,11 @@
 						document.getElementById(`id_${cell_id}`).innerHTML = value; 
 					else
 						document.getElementById(`id_${cell_id}`).innerHTML = "";
-				}
+					document.getElementById(`id_${cell_id}`).style.backgroundColor = "darkgrey";
+					document.getElementById(`id_${cell_id}`).style.borderRadius = "0px";
+					
+				},
+		randNewCell: ''
     	};
     
     (function() {
@@ -67,14 +71,14 @@
 	
 	for(let	i=0; i<gameField.map.length; i++)
 	   for(let j=0; j<gameField.map.length; j++)
-		if(gameField.map[i][j] === 0 || gameField.map[i][j] === 2)
+		if(gameField.map[i][j] === 0) //previous logic ---> gameField.map[i][j] === 0 || gameField.map[i][j] === 2
 			gameField.freeMapCells.push(`${i}${j}`);
 			//freeMapCells will be populated with ids that has the pattern ${i}${j} (like: 00, 01...10,11 etc)
     }
 
 
-    function selectRandomCell() {
-	 let tmp_id, nrOfBlocksToReturn=2, index1, index2;		
+    function selectRandomCell(nrOfBoxes) {
+	 let tmp_id, nrOfBlocksToReturn=nrOfBoxes, index1, index2;		
 	
 	 for(let i=0; i<nrOfBlocksToReturn; i++) {
 	       	 findFreeCells();
@@ -87,6 +91,9 @@
 
 		 insertToMap(index1, index2);	
 	 }
+	 if(nrOfBoxes === 1) {
+		gameField.randNewCell = `id_${index1}${index2}`;	
+         }
     }
 
 
@@ -94,8 +101,6 @@
 
 	 if(gameField.map[index1][index2] === 0)
 	    gameField.map[index1][index2] = 2;
-	 else if(gameField.map[index1][index2] === 2)
-	    gameField.map[index1][index2] = 4;
     }
 
 
@@ -104,19 +109,21 @@
 	 for(let i=0; i<gameField.map.length; i++)
 	   for(let j=0; j<gameField.map.length; j++)
 		gameField.writeInsideCell(`${i}${j}`, gameField.map[i][j]);
+
+	 
     }
 
 
-    function logicGameUp() {
+    function moveUp() {
     	for(var i=1; i<gameField.map.length; i++)
 	   for(var j=0; j<gameField.map.length; j++) {
-		moveUp(i, j);
+		logicGameUp(i, j);
 	}
     }
 
 
 
-    function moveUp(i, j) {
+    function logicGameUp(i, j) {
 	let index_i = i;
 	while(index_i > 0) {
 		if(gameField.map[index_i-1][j] === gameField.map[i][j]) {		
@@ -127,8 +134,8 @@
 		else if(gameField.map[index_i-1][j] !== 0) {	
 			gameField.map[index_i][j] = gameField.map[i][j];
 			if(index_i !== i){ 
-				gameField.map[i][j] = 0 
-			};
+				gameField.map[i][j] = 0;
+			}
 			return;
 		}
 	        index_i--;
@@ -138,28 +145,143 @@
     }
 
 
+
+    function moveDown() {
+    	for(var i=gameField.map.length - 2; i >= 0; i--)
+	   for(var j=0; j<gameField.map.length; j++) {
+		logicGameDown(i, j);
+	}
+    }
+
+
+
+    function logicGameDown(i, j) {
+	var index_i = i;
+	
+	while(index_i < gameField.map.length - 1) {
+		
+		if(gameField.map[index_i+1][j] === gameField.map[i][j]) {		
+			gameField.map[index_i+1][j] = gameField.map[index_i+1][j] + gameField.map[i][j];
+			gameField.map[i][j] = 0;
+			return;
+		}
+		else if(gameField.map[index_i+1][j] !== 0) {	
+			gameField.map[index_i][j] = gameField.map[i][j];
+			if(index_i !== i){ 
+				gameField.map[i][j] = 0;
+			}
+			return;
+		}
+	        index_i++;
+	}
+	gameField.map[index_i][j] = gameField.map[i][j];
+	gameField.map[i][j] = 0;
+    }
+
+
+
+
+
+    function moveLeft() {
+    	for(var j=1; j<gameField.map.length; j++)
+	   for(var i=0; i<gameField.map.length; i++) {
+		logicGameLeft(i, j);
+	}
+    }
+
+
+
+    function logicGameLeft(i, j) {
+	let index_j = j;
+	while(index_j > 0) {
+		if(gameField.map[i][index_j-1] === gameField.map[i][j]) {		
+			gameField.map[i][index_j-1] = gameField.map[i][index_j-1] + gameField.map[i][j];
+			gameField.map[i][j] = 0;
+			return;
+		}
+		else if(gameField.map[i][index_j-1] !== 0) {	
+			gameField.map[i][index_j] = gameField.map[i][j];
+			if(index_j !== j){ 
+				gameField.map[i][j] = 0;
+			}
+			return;
+		}
+	        index_j--;
+	}
+	gameField.map[i][index_j] = gameField.map[i][j];
+	gameField.map[i][j] = 0;
+    }
+
+
+
+
+    function moveRight() {
+    	for(var j=gameField.map.length - 2; j>=0; j--)
+	   for(var i=0; i<gameField.map.length; i++) {
+		logicGameRight(i, j);
+	}
+    }
+
+
+
+    function logicGameRight(i, j) {
+	let index_j = j;
+	while(index_j < gameField.map.length - 1) {
+		if(gameField.map[i][index_j+1] === gameField.map[i][j]) {		
+			gameField.map[i][index_j+1] = gameField.map[i][index_j+1] + gameField.map[i][j];
+			gameField.map[i][j] = 0;
+			return;
+		}
+		else if(gameField.map[i][index_j+1] !== 0) {	
+			gameField.map[i][index_j] = gameField.map[i][j];
+			if(index_j !== j){ 
+				gameField.map[i][j] = 0;
+			}
+			return;
+		}
+	        index_j++;
+	}
+	gameField.map[i][index_j] = gameField.map[i][j];
+	gameField.map[i][j] = 0;
+    }	
+
+
+
     window.document.onkeydown = function (keyboardPress) {
 
 	if (keyboardPress.keyCode === 37) {
 		// Left Arrow Key <-
-		selectRandomCell();
-    		renderTheMap();
+		moveLeft();
+		selectRandomCell(1);
+		renderTheMap();		
 	}
 	else if (keyboardPress.keyCode === 38) {
 		// Up Arrow Key ↑
-		logicGameUp();
-		selectRandomCell();
+		moveUp();
+		selectRandomCell(1);
 		renderTheMap();
 	}
 	else if (keyboardPress.keyCode === 39) {
 		// Right Arrow Key ->
+		moveRight();
+		selectRandomCell(1);
+		renderTheMap();
 	}
 	else if (keyboardPress.keyCode === 40) {
 		// Down Arrow Key ↓
+		moveDown();
+		selectRandomCell(1);
+		renderTheMap();
+	}
+
+
+	if(gameField.randNewCell !== '') {
+		document.getElementById(gameField.randNewCell).style.backgroundColor = "white";
+		document.getElementById(gameField.randNewCell).style.borderRadius = "30%";
 	}
     }
 
-    selectRandomCell();
+    selectRandomCell(2);
     renderTheMap();
 	    
 
