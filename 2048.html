@@ -115,8 +115,8 @@
 
 
     function moveUp() {
-    	for(var i=1; i<gameField.map.length; i++)
-	   for(var j=0; j<gameField.map.length; j++) {
+    	for(let i=1; i<gameField.map.length; i++)
+	   for(let j=0; j<gameField.map.length; j++) {
 		logicGameUp(i, j);
 	}
     }
@@ -147,8 +147,8 @@
 
 
     function moveDown() {
-    	for(var i=gameField.map.length - 2; i >= 0; i--)
-	   for(var j=0; j<gameField.map.length; j++) {
+    	for(let i=gameField.map.length - 2; i >= 0; i--)
+	   for(let j=0; j<gameField.map.length; j++) {
 		logicGameDown(i, j);
 	}
     }
@@ -156,7 +156,7 @@
 
 
     function logicGameDown(i, j) {
-	var index_i = i;
+	let index_i = i;
 	
 	while(index_i < gameField.map.length - 1) {
 		
@@ -183,8 +183,8 @@
 
 
     function moveLeft() {
-    	for(var j=1; j<gameField.map.length; j++)
-	   for(var i=0; i<gameField.map.length; i++) {
+    	for(let j=1; j<gameField.map.length; j++)
+	   for(let i=0; i<gameField.map.length; i++) {
 		logicGameLeft(i, j);
 	}
     }
@@ -216,8 +216,8 @@
 
 
     function moveRight() {
-    	for(var j=gameField.map.length - 2; j>=0; j--)
-	   for(var i=0; i<gameField.map.length; i++) {
+    	for(let j=gameField.map.length - 2; j>=0; j--)
+	   for(let i=0; i<gameField.map.length; i++) {
 		logicGameRight(i, j);
 	}
     }
