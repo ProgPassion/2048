@@ -41,20 +41,22 @@
 
 </div>
 <script type="text/javascript">
-    var gameField = {
-        DOMid : document.getElementById("field"),
-        width : 300,
-        height: 600,
-        map: [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-	freeMapCells: [],
-        writeInsideCell: function (cell_id, value){
+    const gameField = {
+        	DOMid : document.getElementById("field"),
+       	 	width : 300,
+        	height: 300,
+    		map   : [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],
+    		freeMapCells: [],
+        	writeInsideCell: function (cell_id, value){
 					if(value !== 0)
 						document.getElementById(`id_${cell_id}`).innerHTML = value; 
+					else
+						document.getElementById(`id_${cell_id}`).innerHTML = "";
 				}
-    };
+    	};
     
     (function() {
-        for(let i=0; i<gameField.map.length; i++) 
+	for(let i=0; i<gameField.map.length; i++) 
 	   for(let j=0; j<gameField.map.length; j++)
             gameField.DOMid.innerHTML += `<div id='id_${i}${j}'></div>`;
     }());
@@ -67,42 +69,103 @@
 	   for(let j=0; j<gameField.map.length; j++)
 		if(gameField.map[i][j] === 0 || gameField.map[i][j] === 2)
 			gameField.freeMapCells.push(`${i}${j}`);
+			//freeMapCells will be populated with ids that has the pattern ${i}${j} (like: 00, 01...10,11 etc)
     }
 
 
     function selectRandomCell() {
-	let tmp_id, nrOfBlocksToReturn=2, index1, index2;		
+	 let tmp_id, nrOfBlocksToReturn=2, index1, index2;		
 	
-	for(let i=0; i<nrOfBlocksToReturn; i++) {
-		findFreeCells();
-		tmp_id =  Math.floor(Math.random() * gameField.freeMapCells.length);
-		index1 = gameField.freeMapCells[tmp_id].charAt(0);
-		index2 = gameField.freeMapCells[tmp_id].charAt(1); 
+	 for(let i=0; i<nrOfBlocksToReturn; i++) {
+	       	 findFreeCells();
+		 tmp_id = Math.floor(Math.random() * gameField.freeMapCells.length); 
+		 /*tmp_id will get a random index from freeMap cells which has the ids  			
+		 for every empty cell or cells that has the 2 value inside*/ 		
+		
+		 index1 = gameField.freeMapCells[tmp_id].charAt(0);
+		 index2 = gameField.freeMapCells[tmp_id].charAt(1); 
 
-		insertToMap(index1, index2);	
-	}
+		 insertToMap(index1, index2);	
+	 }
     }
 
 
     function insertToMap(index1, index2) {
 
-	if(gameField.map[index1][index2] === 0)
-	   gameField.map[index1][index2] = 2;
-	else if(gameField.map[index1][index2] === 2)
-	   gameField.map[index1][index2] = 4;
+	 if(gameField.map[index1][index2] === 0)
+	    gameField.map[index1][index2] = 2;
+	 else if(gameField.map[index1][index2] === 2)
+	    gameField.map[index1][index2] = 4;
     }
 
 
     
     function renderTheMap() {
-       for(let i=0; i<gameField.map.length; i++)
-	  for(let j=0; j<gameField.map.length; j++)
+	 for(let i=0; i<gameField.map.length; i++)
+	   for(let j=0; j<gameField.map.length; j++)
 		gameField.writeInsideCell(`${i}${j}`, gameField.map[i][j]);
+    }
+
+
+    function logicGameUp() {
+    	for(var i=1; i<gameField.map.length; i++)
+	   for(var j=0; j<gameField.map.length; j++) {
+		moveUp(i, j);
+	}
+    }
+
+
+
+    function moveUp(i, j) {
+	let index_i = i;
+	while(index_i > 0) {
+		if(gameField.map[index_i-1][j] === gameField.map[i][j]) {		
+			gameField.map[index_i-1][j] = gameField.map[index_i-1][j] + gameField.map[i][j];
+			gameField.map[i][j] = 0;
+			return;
+		}
+		else if(gameField.map[index_i-1][j] !== 0) {	
+			gameField.map[index_i][j] = gameField.map[i][j];
+			if(index_i !== i){ 
+				gameField.map[i][j] = 0 
+			};
+			return;
+		}
+	        index_i--;
+	}
+	gameField.map[index_i][j] = gameField.map[i][j];
+	gameField.map[i][j] = 0;
+    }
+
+
+    window.document.onkeydown = function (keyboardPress) {
+
+	if (keyboardPress.keyCode === 37) {
+		// Left Arrow Key <-
+		selectRandomCell();
+    		renderTheMap();
+	}
+	else if (keyboardPress.keyCode === 38) {
+		// Up Arrow Key ↑
+		logicGameUp();
+		selectRandomCell();
+		renderTheMap();
+	}
+	else if (keyboardPress.keyCode === 39) {
+		// Right Arrow Key ->
+	}
+	else if (keyboardPress.keyCode === 40) {
+		// Down Arrow Key ↓
+	}
     }
 
     selectRandomCell();
     renderTheMap();
 	    
+
+
+
+    
 </script>
 </body>
 </html>
